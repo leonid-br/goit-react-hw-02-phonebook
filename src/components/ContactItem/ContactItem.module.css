@@ -1,0 +1,25 @@
+.item {
+    font-weight: 600;
+    position: relative;
+}
+
+.item:not(:last-child) {
+    margin-bottom: 5px;
+}
+
+.button {
+    position: absolute;
+    right: 0;
+
+    font-size: 12px;
+    padding: 0 3px;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background-color: indianred;
+}
+
+.number {
+    margin-left: 3px;
+}

@@ -1,0 +1,18 @@
+.label {
+    font-weight: 700;
+}
+
+.input {
+    display: flex;
+    margin-top: 10px;
+    border-radius: 5px;
+    border-color: azure;
+}
+
+.input:focus {
+    border-radius: 5px;
+    border-color: green;
+    outline: 0;
+    outline-offset: 0;
+    margin-bottom: 10px;
+}

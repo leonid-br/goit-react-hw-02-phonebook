@@ -2,6 +2,9 @@ import { Component } from 'react';
 import shortid from 'shortid';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
+import ContactList from './ContactList';
+import Container from './Container';
+import Heading from './Heading';
 
 class App extends Component {
     state = {
@@ -31,46 +34,72 @@ class App extends Component {
         filter: '',
     };
 
-    addContact = obj => {
-        const contact = {
+    addContact = ({ name, number }) => {
+        const { contacts } = this.state;
+        const normalizeName = name.toLowerCase();
+        const checkedName = contacts.find(
+            ({ name }) => normalizeName === name.toLowerCase(),
+        );
+
+        const newContact = {
             id: shortid.generate(),
-            name: obj.name,
-            number: obj.number,
+            name,
+            number,
         };
+
+        if (checkedName) {
+            return alert(
+                `This contact "${name.toUpperCase()}" has already been added to your Phonebook`,
+            );
+        }
+
         this.setState(prevState => ({
-            contacts: [contact, ...prevState.contacts],
+            contacts: [newContact, ...prevState.contacts],
         }));
     };
 
     changeFilter = e => {
-        this.setState({ filter: e.currentTarget.value });
+        this.setState({
+            filter: e.currentTarget.value,
+        });
+    };
+
+    findContact = () => {
+        const { filter, contacts } = this.state;
+        const normalizeFilter = filter.toLowerCase();
+        return contacts.filter(contact =>
+            contact.name.toLowerCase().includes(normalizeFilter),
+        );
+    };
+
+    onDelete = idContact => {
+        this.setState(prevState => ({
+            contacts: prevState.contacts.filter(
+                ({ id }) => id !== idContact,
+            ),
+        }));
     };
 
     render() {
-        const normalizeFilter = this.state.filter.toLowerCase();
-        const findContact = this.state.contacts.filter(contact =>
-            contact.name.toLowerCase().includes(normalizeFilter),
-        );
+        const {
+            addContact,
+            changeFilter,
+            findContact,
+            onDelete,
+        } = this;
+        const { filter } = this.state;
 
         return (
-            <div>
-                <h1>Phonebook</h1>
-                <ContactForm onSubmit={this.addContact} />
-                <h2>Contacts</h2>
-                <Filter
-                    value={this.state.filter}
-                    onChange={this.changeFilter}
+            <Container>
+                <Heading title={'Phonebook'} />
+                <ContactForm onSubmit={addContact} />
+                <Heading title={'Contacts'} />
+                <Filter value={filter} onChange={changeFilter} />
+                <ContactList
+                    contactsArr={findContact()}
+                    deleteContact={onDelete}
                 />
-
-                <ul>
-                    {findContact.map(el => (
-                        <li key={el.id}>
-                            <span>{el.name}</span>:
-                            <span> {el.number}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            </Container>
         );
     }
 }
